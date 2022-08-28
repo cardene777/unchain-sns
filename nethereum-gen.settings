@@ -1,0 +1,7 @@
+{
+    "projectName": "UnchainSns",
+    "namespace": "UnchainSns.Contracts",
+    "lang": 0,
+    "autoCodeGen": true,
+    "projectPath": "../"
+}

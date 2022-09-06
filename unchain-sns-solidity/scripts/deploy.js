@@ -1,31 +1,71 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
-const hre = require("hardhat");
+const main = async () => {
+  const [owner, randomPerson] = await hre.ethers.getSigners();
+  const UnchainSnsFactory = await hre.ethers.getContractFactory("Sns");
+  const UnchainSnsContract = await UnchainSnsFactory.deploy();
+  const UnchainSns = await UnchainSnsContract.deployed();
 
-async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  console.log("Contract deployed to: ", UnchainSns.address);
+  console.log("owner address: ", owner.address);
+  console.log("randomPerson address: ", randomPerson.address);
 
-  const lockedAmount = hre.ethers.utils.parseEther("1");
+  await UnchainSnsContract.post("test1")
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  let postData
+  postData = await UnchainSnsContract.getPost(1)
+  console.log("*".repeat(50));
+  console.log("postData: ", postData);
+  console.log("*".repeat(50));
 
-  await lock.deployed();
+  await UnchainSnsContract.post("test2")
 
-  console.log(
-    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  );
-}
+  postData = await UnchainSnsContract.getPost(2)
+  console.log("*".repeat(50));
+  console.log("postData: ", postData);
+  console.log("*".repeat(50));
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+  try {
+      await UnchainSnsContract.goodPost(1)
+  } catch (e) {
+      console.log(e.message);
+  }
+
+  await UnchainSnsContract.connect(randomPerson).goodPost(1)
+
+  postData = await UnchainSnsContract.getPost(1)
+  console.log("*".repeat(50));
+  console.log("postData: ", postData);
+  console.log("*".repeat(50));
+
+  try {
+      await UnchainSnsContract.connect(randomPerson).goodPost(1)
+  } catch (e) {
+      console.log(e.message);
+  }
+
+  await UnchainSnsContract.connect(randomPerson).goodRemove(1)
+
+  postData = await UnchainSnsContract.getPost(1)
+  console.log("*".repeat(50));
+  console.log("postData: ", postData);
+  console.log("*".repeat(50));
+
+  try {
+      await UnchainSnsContract.connect(randomPerson).goodRemove(1)
+  } catch (e) {
+      console.log(e.message);
+  }
+
+
+};
+
+const runMain = async () => {
+  try {
+      await main();
+      process.exit(0);
+  } catch (error) {
+      console.log(error);
+      process.exit(1);
+  }
+};
+
+runMain();

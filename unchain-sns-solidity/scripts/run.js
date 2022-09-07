@@ -55,6 +55,10 @@ const main = async () => {
         console.log(e.message);
     }
 
+    let allPosts = await UnchainSnsContract.getAllPost();
+    console.log("*".repeat(50));
+    console.log("allPosts: ", allPosts);
+    console.log("*".repeat(50));
 
 };
 

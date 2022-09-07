@@ -5,6 +5,8 @@ pragma solidity ^0.8.9;
 import "hardhat/console.sol";
 
 contract Sns {
+
+    event EmitPostData(address indexed user, string text, uint good, uint timestamp);
     uint public postCounter = 1;
 
     struct PostData {
@@ -14,7 +16,7 @@ contract Sns {
         uint timestamp; // 投稿日時
     }
 
-    PostData[] public postData;
+    PostData[] postData;
     mapping(uint => PostData) public postIdData;
     mapping(uint => address[]) public goodWallet;
 
@@ -23,9 +25,14 @@ contract Sns {
         postData.push(newPostData);
         postIdData[postCounter] = newPostData;
         postCounter++;
+        emit EmitPostData(msg.sender, _text, 0, block.timestamp);
     }
 
-    function getPost(uint _postId) public view returns (address, string memory, uint) {
+    function getAllPost() public view returns (PostData[] memory) {
+        return postData;
+    }
+
+    function getPost(uint _postId) public view returns (address, string memory, uint, uint) {
         return (postIdData[_postId].user, postIdData[_postId].text, postIdData[_postId].good, postIdData[_postId].timestamp);
     }
 

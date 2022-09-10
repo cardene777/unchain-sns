@@ -1,0 +1,23 @@
+{
+  "name": "unchain-sns",
+  "version": "1.0.0",
+  "description": "```sh cd unchain-sns-solidity npx hardhat run scripts/deploy.js --network rinkeby ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cardene777/unchain-sns.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cardene777/unchain-sns/issues"
+  },
+  "homepage": "https://github.com/cardene777/unchain-sns#readme",
+  "devDependencies": {
+    "hardhat": "^2.11.1"
+  }
+}

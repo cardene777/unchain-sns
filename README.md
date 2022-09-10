@@ -24,3 +24,22 @@ rm -rf ~/.npm
 ```sh
 rm -rf node_modules
 ```
+
+## Create Hardhat App
+
+```sh
+npm init -y
+npm install --save-dev hardhat
+npx hardhat
+```
+
+```sh
+npx hardhat compile
+npx hardhat test
+```
+
+### Ether Network 立ち上げ
+
+```sh
+npx hardhat node
+```

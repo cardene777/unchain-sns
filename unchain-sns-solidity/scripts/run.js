@@ -1,5 +1,5 @@
 const main = async () => {
-    const [owner, randomPerson] = await hre.ethers.getSigners();
+    const [owner, randomPerson, randomPerson2] = await hre.ethers.getSigners();
     const UnchainSnsFactory = await hre.ethers.getContractFactory("Sns");
     const UnchainSnsContract = await UnchainSnsFactory.deploy();
     const UnchainSns = await UnchainSnsContract.deployed();
@@ -12,6 +12,7 @@ const main = async () => {
 
     let postData
     postData = await UnchainSnsContract.getPost(1)
+    console.log("Get Post");
     console.log("*".repeat(50));
     console.log("postData: ", postData);
     console.log("*".repeat(50));
@@ -19,45 +20,33 @@ const main = async () => {
     await UnchainSnsContract.post("test2")
 
     postData = await UnchainSnsContract.getPost(2)
+    console.log("Get Post");
     console.log("*".repeat(50));
     console.log("postData: ", postData);
     console.log("*".repeat(50));
-
-    try {
-        await UnchainSnsContract.goodPost(1)
-    } catch (e) {
-        console.log(e.message);
-    }
 
     await UnchainSnsContract.connect(randomPerson).goodPost(1)
 
     postData = await UnchainSnsContract.getPost(1)
+    console.log("Good Post");
     console.log("*".repeat(50));
     console.log("postData: ", postData);
     console.log("*".repeat(50));
 
-    try {
-        await UnchainSnsContract.connect(randomPerson).goodPost(1)
-    } catch (e) {
-        console.log(e.message);
-    }
+    await UnchainSnsContract.connect(randomPerson2).goodPost(1)
+
+    postData = await UnchainSnsContract.getPost(1)
+    console.log("Good Post");
+    console.log("*".repeat(50));
+    console.log("postData: ", postData);
+    console.log("*".repeat(50));
 
     await UnchainSnsContract.connect(randomPerson).goodRemove(1)
 
     postData = await UnchainSnsContract.getPost(1)
+    console.log("Remove Post");
     console.log("*".repeat(50));
     console.log("postData: ", postData);
-    console.log("*".repeat(50));
-
-    try {
-        await UnchainSnsContract.connect(randomPerson).goodRemove(1)
-    } catch (e) {
-        console.log(e.message);
-    }
-
-    let allPosts = await UnchainSnsContract.getAllPost();
-    console.log("*".repeat(50));
-    console.log("allPosts: ", allPosts);
     console.log("*".repeat(50));
 
 };

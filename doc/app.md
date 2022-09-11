@@ -8,7 +8,7 @@
 
 ### 投稿一覧
 
-![post_list](https://github.com/cardene777/unchain-sns/tree/main/doc/img/post_list.png)
+![post_list](https://github.com/cardene777/unchain-sns/blob/main/doc/img/post_list.png)
 
 投稿の一覧が表示されます。
 デフォルトは投稿日時が最新のものほど上に表示されています。
@@ -21,20 +21,20 @@
 いいねしていない投稿は以下のアイコンになります。
 このアイコンをクリックするといいねされます。
 
-![good](https://github.com/cardene777/unchain-sns/tree/main/doc/img/good.png)
+![good](https://github.com/cardene777/unchain-sns/blob/main/doc/img/good.png)
 
 - 自分の投稿
 
 自分の投稿はいいねできないようになっているため、以下のアイコンが表示されクリックできません。
 
-![good_owner](https://github.com/cardene777/unchain-sns/tree/main/doc/img/good_owner.png)
+![good_owner](https://github.com/cardene777/unchain-sns/blob/main/doc/img/good_owner.png)
 
 - いいねした投稿
 
 いいねした投稿は黒塗りされます。
 このアイコンをクリックするといいねが取り消されます。
 
-![good_done](https://github.com/cardene777/unchain-sns/tree/main/doc/img/good_done.png)
+![good_done](https://github.com/cardene777/unchain-sns/blob/main/doc/img/good_done.png)
 
 ### 投稿並び替え
 

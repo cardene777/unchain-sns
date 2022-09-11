@@ -17,6 +17,9 @@ function App() {
   // 入力したテキストを保存
   const [text, setText] = React.useState("")
 
+  // 表示順を指定
+  const [sort, setSort] = React.useState("postAsc")
+
   // 投稿情報を保存
   const [allPost, setAllPost] = useState([]);
 
@@ -216,6 +219,73 @@ function App() {
     }
   };
 
+  // 時間でソート
+  const timeSort = async (order) => {
+    let sortPost;
+    // 降順
+    if (order === "dec") {
+      setSort("postDec");
+      sortPost = allPost.sort((post1, post2) => {
+        if (post1['timestamp'] < post2['timestamp']) {
+          return 1;
+        }
+        if (post1['timestamp'] > post2['timestamp']) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+
+    // 昇順
+    if (order === "asc") {
+      setSort("postAsc");
+      sortPost = allPost.sort((post1, post2) => {
+        if (post1['timestamp'] < post2['timestamp']) {
+          return -1;
+        }
+        if (post1['timestamp'] > post2['timestamp']) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+    setAllPost(sortPost);
+  };
+
+  // いいね数でソート
+  const goodSort = async (order) => {
+    let sortPost;
+
+    // 降順
+    if (order === "dec") {
+      setSort("goodDec");
+      sortPost = allPost.sort((post1, post2) => {
+        if (post1['good'] < post2['good']) {
+          return 1;
+        }
+        if (post1['good'] > post2['good']) {
+          return -1;
+        }
+        return 0;
+      });
+    }
+
+    // 昇順
+    if (order === "asc") {
+      setSort("goodAsc");
+      sortPost = allPost.sort((post1, post2) => {
+        if (post1['good'] < post2['good']) {
+          return -1;
+        }
+        if (post1['good'] > post2['good']) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+    setAllPost(sortPost);
+  };
+
   // WEBページロード時に実行。
   useEffect(() => {
     checkIfWalletIsConnected();
@@ -227,7 +297,6 @@ function App() {
         <div className="flex justify-center w-screen h-screen px-4 text-gray-700">
           <div className="flex w-full max-w-screen-lg">
             <div className="flex flex-col w-64 py-4 pr-3">
-              <a className="px-3 py-2 mt-2 text-lg font-medium rounded-sm hover:bg-gray-300" href="#">Home</a>
               {/* ウォレットに接続されている確認 */}
               {!currentAccount && (
                 <button className="waveButton px-3 py-2 mt-2 text-lg font-medium rounded-sm hover:bg-gray-300" onClick={connectWallet}>
@@ -239,6 +308,18 @@ function App() {
                   { currentAccount.substr(0, 8) }...
                 </button>
               )}
+              <button className="waveButton px-3 py-2 mt-2 text-lg font-medium rounded-sm hover:bg-gray-300" onClick={() => timeSort("asc")}>
+                Home(asc)
+              </button>
+              <button className="waveButton px-3 py-2 mt-2 text-lg font-medium rounded-sm hover:bg-gray-300" onClick={() => timeSort("dec")}>
+                Home(des)
+              </button>
+              <button className="waveButton px-3 py-2 mt-2 text-lg font-medium rounded-sm hover:bg-gray-300" onClick={() => goodSort("asc")}>
+                Good(asc)
+              </button>
+              <button className="waveButton px-3 py-2 mt-2 text-lg font-medium rounded-sm hover:bg-gray-300" onClick={() => goodSort("dec")}>
+                Good(des)
+              </button>
               <a className="flex px-3 py-2 mt-auto text-lg rounded-sm font-medium hover:bg-gray-200" href="#">
                 <span className="flex-shrink-0 w-10 h-10 bg-gray-400 rounded-full" />
                 <div className="flex ml-2 items-stretch">
@@ -271,7 +352,7 @@ function App() {
                   </div>
                 </div>
 
-                {currentAccount &&
+                { sort === "postAsc" && currentAccount &&
                   allPost
                     .slice(0)
                     .reverse()
@@ -311,8 +392,139 @@ function App() {
                           </div>
                         </div>
                       );
-                    })
-                  }
+                    }
+                  )
+                }
+                { sort === "postDec" && currentAccount &&
+                  allPost
+                    .slice(0)
+                    .reverse()
+                    .map((pos, index) => {
+                      return (
+                        <div className="flex w-full p-8 border-b border-gray-300">
+                          <span className="flex-shrink-0 w-12 h-12 bg-gray-400 rounded-full" />
+                          <div className="flex flex-col flex-grow ml-4">
+                            <div className="flex">
+                              <span className="font-semibold">{pos.user}</span>
+                              <span className="ml-auto text-sm">{pos.timestamp.toDateString()} {pos.timestamp.toLocaleTimeString()}</span>
+                            </div>
+                            <p className="mt-1">{pos.text}</p>
+                            <div className="flex mt-2">
+                              {/* 自分の投稿の時 */}
+                              { pos.user.toLowerCase() === currentAccount.toLowerCase() &&
+                                <p className="text-sm font-semibold">
+                                  <FontAwesomeIcon icon={faHeartCircleCheck} size="lg" className="pr-2"/>
+                                </p>
+                              }
+                              {/* 既にいいねした投稿の時 */}
+                              { pos.user.toLowerCase() !== currentAccount.toLowerCase() &&
+                                pos.goodUser.includes(currentAccount) &&
+                                <button className="text-sm font-semibold" onClick={() => goodRemove(pos.postId)}>
+                                  <FontAwesomeIcon icon={faThumbsUp} size="lg" className="pr-2"/>
+                                </button>
+                              }
+                              {/* いいねしていない投稿の時 */}
+                              { pos.user.toLowerCase() !== currentAccount.toLowerCase() &&
+                                !pos.goodUser.includes(currentAccount) &&
+                                <button className="text-sm font-semibold" onClick={() => goodPost(pos.postId)}>
+                                  <FontAwesomeIcon icon={faThumbsUpRegular} size="lg" className="pr-2"/>
+                                </button>
+                              }
+                              <p>{pos.good.toString()}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                  )
+                }
+                { sort === "goodAsc" && currentAccount &&
+                  allPost
+                    .slice(0)
+                    .reverse()
+                    .map((pos, index) => {
+                      return (
+                        <div className="flex w-full p-8 border-b border-gray-300">
+                          <span className="flex-shrink-0 w-12 h-12 bg-gray-400 rounded-full" />
+                          <div className="flex flex-col flex-grow ml-4">
+                            <div className="flex">
+                              <span className="font-semibold">{pos.user}</span>
+                              <span className="ml-auto text-sm">{pos.timestamp.toDateString()} {pos.timestamp.toLocaleTimeString()}</span>
+                            </div>
+                            <p className="mt-1">{pos.text}</p>
+                            <div className="flex mt-2">
+                              {/* 自分の投稿の時 */}
+                              { pos.user.toLowerCase() === currentAccount.toLowerCase() &&
+                                <p className="text-sm font-semibold">
+                                  <FontAwesomeIcon icon={faHeartCircleCheck} size="lg" className="pr-2"/>
+                                </p>
+                              }
+                              {/* 既にいいねした投稿の時 */}
+                              { pos.user.toLowerCase() !== currentAccount.toLowerCase() &&
+                                pos.goodUser.includes(currentAccount) &&
+                                <button className="text-sm font-semibold" onClick={() => goodRemove(pos.postId)}>
+                                  <FontAwesomeIcon icon={faThumbsUp} size="lg" className="pr-2"/>
+                                </button>
+                              }
+                              {/* いいねしていない投稿の時 */}
+                              { pos.user.toLowerCase() !== currentAccount.toLowerCase() &&
+                                !pos.goodUser.includes(currentAccount) &&
+                                <button className="text-sm font-semibold" onClick={() => goodPost(pos.postId)}>
+                                  <FontAwesomeIcon icon={faThumbsUpRegular} size="lg" className="pr-2"/>
+                                </button>
+                              }
+                              <p>{pos.good.toString()}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                  )
+                }
+                { sort === "goodDec" && currentAccount &&
+                  allPost
+                    .slice(0)
+                    .reverse()
+                    .map((pos, index) => {
+                      return (
+                        <div className="flex w-full p-8 border-b border-gray-300">
+                          <span className="flex-shrink-0 w-12 h-12 bg-gray-400 rounded-full" />
+                          <div className="flex flex-col flex-grow ml-4">
+                            <div className="flex">
+                              <span className="font-semibold">{pos.user}</span>
+                              <span className="ml-auto text-sm">{pos.timestamp.toDateString()} {pos.timestamp.toLocaleTimeString()}</span>
+                            </div>
+                            <p className="mt-1">{pos.text}</p>
+                            <div className="flex mt-2">
+                              {/* 自分の投稿の時 */}
+                              { pos.user.toLowerCase() === currentAccount.toLowerCase() &&
+                                <p className="text-sm font-semibold">
+                                  <FontAwesomeIcon icon={faHeartCircleCheck} size="lg" className="pr-2"/>
+                                </p>
+                              }
+                              {/* 既にいいねした投稿の時 */}
+                              { pos.user.toLowerCase() !== currentAccount.toLowerCase() &&
+                                pos.goodUser.includes(currentAccount) &&
+                                <button className="text-sm font-semibold" onClick={() => goodRemove(pos.postId)}>
+                                  <FontAwesomeIcon icon={faThumbsUp} size="lg" className="pr-2"/>
+                                </button>
+                              }
+                              {/* いいねしていない投稿の時 */}
+                              { pos.user.toLowerCase() !== currentAccount.toLowerCase() &&
+                                !pos.goodUser.includes(currentAccount) &&
+                                <button className="text-sm font-semibold" onClick={() => goodPost(pos.postId)}>
+                                  <FontAwesomeIcon icon={faThumbsUpRegular} size="lg" className="pr-2"/>
+                                </button>
+                              }
+                              <p>{pos.good.toString()}</p>
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    }
+                  )
+                }
+
 
               </div>
             </div>

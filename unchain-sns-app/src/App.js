@@ -9,7 +9,7 @@ import './App.css';
 import abi from "./utils/Sns.json";
 
 function App() {
-  const contractAddress = "0x361b0db3730795426c2479e54e01d18966f887e6";
+  const contractAddress = "0x50df830663D60d8f89CF5e4Da95ebAe716Db0E1F";
 
   // ユーザーのパブリックウォレットを保存するために使用する状態変数を定義
   const [currentAccount, setCurrentAccount] = useState("");
@@ -23,12 +23,14 @@ function App() {
   // 投稿情報を保存
   const [allPost, setAllPost] = useState([]);
 
+  // 投稿文章を保存する関数
   const textSet = e => setText(e.target.value);
 
   // ABIを参照
   const contractABI = abi.abi;
 
 
+  // 全ての投稿を取得
   const getAllPost = async () => {
     const { ethereum } = window;
 
@@ -249,6 +251,8 @@ function App() {
         return 0;
       });
     }
+
+    // 並び替えた配列をAllPostにセット
     setAllPost(sortPost);
   };
 
@@ -283,6 +287,7 @@ function App() {
         return 0;
       });
     }
+    // 並び替えた配列をAllPostにセット
     setAllPost(sortPost);
   };
 
@@ -308,6 +313,8 @@ function App() {
                   { currentAccount.substr(0, 8) }...
                 </button>
               )}
+              {/* ソート */}
+              {/* Home(asc): 時間でソート（昇順）, Home(des): 時間でソート（降順）, Good(asc): いいねでソート（昇順）,Good(des): いいねでソート（降順） */}
               <button className="waveButton px-3 py-2 mt-2 text-lg font-medium rounded-sm hover:bg-gray-300" onClick={() => timeSort("asc")}>
                 Home(asc)
               </button>
@@ -334,6 +341,7 @@ function App() {
               <div className="flex-grow h-0 overflow-auto">
                 <div className="flex w-full p-8 border-b-4 border-gray-300">
                   <span className="flex-shrink-0 w-12 h-12 bg-gray-400 rounded-full" />
+                  {/* 投稿が140文字以内か判定し、141字以上の時赤文字にして、投稿ボタンを押せなくする */}
                   <div className="flex flex-col flex-grow ml-4">
                     { text.length <= 140 &&
                       <>
@@ -347,10 +355,16 @@ function App() {
                       <>
                         <textarea className="p-3 bg-transparent border border-gray-500 rounded-sm text-red-600" rows={3} placeholder="What's happening?" value={text} onChange={textSet} />
                         <p className="text-sm text-red-600">＊文字数は140文字以内にしてください。</p>
+                        <div className="flex justify-between mt-2">
+                          <button disabled className="flex items-center h-8 px-3 text-xs rounded-sm bg-gray-100 hover:bg-gray-100 text-gray-300" onClick={post}>Post</button>
+                        </div>
                       </>
                     }
                   </div>
                 </div>
+
+                {/* ソートによって表示を切り替え（煩雑なため今後より良く修正予定） */}
+                {/* 投稿を１つずつ表示 */}
 
                 { sort === "postAsc" && currentAccount &&
                   allPost

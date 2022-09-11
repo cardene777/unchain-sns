@@ -2,7 +2,7 @@
 
 ### 投稿
 
-![post_img](https://github.com/cardene777/unchain-sns/tree/main/doc/img/post_img.png)
+![post_img](https://github.com/cardene777/unchain-sns/blob/main/doc/img/post_img.png)
 
 テキストを入力し、「Post」を押したのちに承認を押すと投稿されます。
 
